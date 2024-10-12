@@ -12,22 +12,20 @@ def build_all_database(filename_orig,file_not_orig): #работает НЕ с 4
     orig.close()
 
     filename_not_orig = file_not_orig.split('/')
-    filename_not_orig[-1] = 'CACHE_' + filename_not_orig[-1]
-    filename_not_orig = '/'.join(filename_not_orig)
+    path_cache_not_orig = os.getcwd() + '\\CACHE\\' + 'CACHE_' + filename_not_orig[-1]
 
-    cache_not_orig = open(filename_not_orig,"r")
+    cache_not_orig = open(path_cache_not_orig,"r")
 
     filename_check = file_not_orig.split('/')
-    filename_check[-1] = 'DICT_' + filename_check[-1]
-    filename_check = '/'.join(filename_check)
+    path_filename_check = os.getcwd() + '\\CACHE\\' + 'DICT_' + filename_check[-1]
 
-    if os.path.exists(filename_check):
-        dict_not_orig = open(filename_check,"r")
+    if os.path.exists(path_filename_check):
+        dict_not_orig = open(path_filename_check,"r")
         database_not_orig = eval(dict_not_orig.readline())
         dict_not_orig.close()
         return (database_not_orig,[key for key in database_not_orig],cache_not_orig.readline())
     else:
-        return build_database_not_orig(database_orig,cache_not_orig,filename_check)
+        return build_database_not_orig(database_orig,cache_not_orig,path_filename_check)
 
 def build_database_not_orig(origin,filename,filename_check):    
     database = {}

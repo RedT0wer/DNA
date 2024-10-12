@@ -1,12 +1,13 @@
 ﻿import os
 
+
 def build_sequense(filename,string,avg):
     filename = filename.split('/')
-    filename[-1] = 'CACHE_' + filename[-1]
-    filename = '/'.join(filename)
 
-    if not os.path.exists(filename):
-        f = open(filename,"w")
+    path_folder = os.getcwd() + '\\CACHE\\' + 'CACHE_' + filename[-1]
+
+    if not os.path.exists(path_folder):
+        f = open(path_folder,"w")
         f.write(transform_string(string[avg:]))
 
 def transform_mutation(st,string):

@@ -4,7 +4,15 @@
     "find_color_text": "<span style=\"color: #FF1493;\">",
     "difference_color_text": "<span style=\"color: blue;\">",
     "stop_color_text": "<span style=\"color: red;\">",
-    "font_size" : "12pt"
+    "font_size": "12pt",
+    "path_folder_cache" : "\\CACHE\\"
   },
-  "custom" : {}
+  "custom": {
+    "base_color_text": "<span style=\"color: black;\">",
+    "find_color_text": "<span style=\"color: #FF1493;\">",
+    "difference_color_text": "<span style=\"color: blue;\">",
+    "stop_color_text": "<span style=\"color: red;\">",
+    "font_size": "12pt",
+    "path_folder_cache": "\\CACHE\\"
+  }
 }

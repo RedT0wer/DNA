@@ -35,16 +35,28 @@ def SetFontSize(new_font_size):
 
 def GetPath():
     fil = open("Configuration.json","r")
-    dictionary = eval(fil.readline())["path_folder_cache"]
+    dictionary = eval(fil.readline())["custom"]
     fil.close()
     return dictionary["path_folder_cache"]
 
 def SetPath(new_path_folder_cache):
     fil = open("Configuration.json","r")
-    dictionary = eval(fil.readline())["path_folder_cache"]
+    dictionary = eval(fil.readline())["custom"]
     fil.close()
 
     dictionary["path_folder_cache"] = new_path_folder_cache
+
+    fil = open("Configuration.json","w")
+    fil.write(json.dumps(dictionary))
+    fil.close()
+
+
+def ReturnDefault():
+    fil = open("Configuration.json","r")
+    dictionary = eval(fil.readline())
+    fil.close()
+
+    dictionary["custom"] = dictionary["default"]
 
     fil = open("Configuration.json","w")
     fil.write(json.dumps(dictionary))

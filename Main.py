@@ -4,6 +4,7 @@ import gui
 from PyQt5 import QtWidgets
 from PyQt5.QtWidgets import QFileDialog
 from FunctionRequest import func_request
+from ConfigWrite import Config
 #pyuic5 0901.ui -o gui2.py
 #1 - NM_003319:c.65555find
 #2 - NM_003319:c.2_3del
@@ -15,6 +16,8 @@ class MainWindow(QtWidgets.QMainWindow, gui.Ui_MainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
+
+        self.config = Config()
 
         self.path_origin_request = ''
         self.path_txt_request = ''
@@ -53,7 +56,7 @@ class MainWindow(QtWidgets.QMainWindow, gui.Ui_MainWindow):
         if self.FilenameTxtRequest.text() and self.FilenameTxtRequest1.text() and self.LineEditRequest.text():
             try:
                 output = func_request(self.LineEditRequest.text(),self.path_origin_request,self.path_txt_request)
-                self.TextResult.setHtml(f"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:12pt; font-weight:400; font-style:normal;\">\n<span>{output}</span></body></html>")
+                self.TextResult.setHtml(f"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:{self.config.font_size}; font-weight:400; font-style:normal;\">\n<span>{output}</span></body></html>")
                 self.CheckResultRequest.setChecked(True)
                 self.CheckFailRequest.setChecked(False)
             except:

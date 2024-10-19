@@ -442,7 +442,7 @@
    <property name="title">
     <string/>
    </property>
-   <widget class="QLineEdit" name="lineEdit">
+   <widget class="QLineEdit" name="line_fontsize">
     <property name="geometry">
      <rect>
       <x>10</x>

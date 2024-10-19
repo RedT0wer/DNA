@@ -57,6 +57,7 @@ class SettingUI(QtWidgets.QDialog, config.Ui_Settings):
         self.difference_color_text.setText(self.get_html_code(dictionary["difference_color_text"]))
         self.stop_color_text.setText(self.get_html_code(dictionary["stop_color_text"]))
         self.find_color_text.setText(self.get_html_code(dictionary["find_color_text"]))
+        self.line_fontsize.setText(dictionary["font_size"][:-2])
 
     def ReadConfigForColor(self):
         self.base_color.setStyleSheet(f"background-color: {self.base_color_text.text()}")
@@ -69,6 +70,7 @@ class SettingUI(QtWidgets.QDialog, config.Ui_Settings):
         self.config.difference_color_text = "<span style=\"color: " + self.difference_color_text.text() + ";\">"
         self.config.find_color_text = "<span style=\"color: " + self.find_color_text.text() + ";\">"
         self.config.stop_color_text = "<span style=\"color: " + self.stop_color_text.text() + ";\">"
+        self.config.font_size = self.line_fontsize.text() + "pt"
 
         self.config.apply_settings()
     def Reset(self):

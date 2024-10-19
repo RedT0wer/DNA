@@ -22,12 +22,7 @@ class SettingUI(QtWidgets.QDialog, config.Ui_Settings):
         self.config = config
 
         self.ReadConfigForText(self.config.__dict__)
-        self.ReadConfigForColor() 
-
-
-        self.horizontalScrollBar.valueChanged.connect(self.on_value_changed)
-        self.horizontalScrollBar.setRange(0,100)
-        
+        self.ReadConfigForColor()         
 
         self.button_diff.clicked.connect(self.get_color_diff)
         self.button_base.clicked.connect(self.get_color_base)
@@ -39,7 +34,19 @@ class SettingUI(QtWidgets.QDialog, config.Ui_Settings):
         self.button_reset.clicked.connect(self.Reset)
 
     def on_value_changed(self, value):
-        self.path_folder.setStyleSheet(f"background-color: rgba(255, 255, 255, 0);margin-left: {-value}px;")
+        font_metrics = QtGui.QFontMetrics(self.path_folder.font())
+        pixel_length = font_metrics.horizontalAdvance(self.path_folder.text())
+        
+        width_text = pixel_length
+        width_block = self.path_folder.width()
+
+        max_offset = width_text - width_block
+        if max_offset < 0:
+            max_offset = 0
+        offset = (value / 100) * max_offset
+        print(max_offset,value,offset)
+
+        self.path_folder.setStyleSheet(f"background-color: rgba(255, 255, 255, 0);margin-right: {offset}px;")
 
     def get_html_code(self, string):
         return ''.join(string.split('color: ')[1][:7])
@@ -84,6 +91,7 @@ class SettingUI(QtWidgets.QDialog, config.Ui_Settings):
         self.config.find_color_text = "<span style=\"color: " + self.find_color_text.text() + ";\">"
         self.config.stop_color_text = "<span style=\"color: " + self.stop_color_text.text() + ";\">"
         self.config.font_size = self.line_fontsize.text() + "pt"
+        self.config.path_folder_cache = self.path_folder.text()
 
         self.config.apply_settings()
     def Reset(self):

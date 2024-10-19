@@ -514,39 +514,46 @@
      <string>...</string>
     </property>
    </widget>
-   <widget class="QScrollBar" name="horizontalScrollBar">
+   <widget class="QScrollArea" name="scrollArea">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>30</y>
-      <width>171</width>
-      <height>18</height>
-     </rect>
-    </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
-    </property>
-   </widget>
-   <widget class="QLabel" name="path_folder">
-    <property name="geometry">
-     <rect>
-      <x>10</x>
+      <x>0</x>
       <y>0</y>
-      <width>171</width>
-      <height>31</height>
+      <width>191</width>
+      <height>51</height>
      </rect>
     </property>
-    <property name="font">
-     <font>
-      <pointsize>12</pointsize>
-     </font>
+    <property name="widgetResizable">
+     <bool>true</bool>
     </property>
-    <property name="styleSheet">
-     <string notr="true">background-color: rgba(255, 255, 255, 10);</string>
-    </property>
-    <property name="text">
-     <string>../CACHE/</string>
-    </property>
+    <widget class="QWidget" name="scrollAreaWidgetContents">
+     <property name="geometry">
+      <rect>
+       <x>0</x>
+       <y>0</y>
+       <width>189</width>
+       <height>49</height>
+      </rect>
+     </property>
+     <widget class="QLabel" name="path_folder">
+      <property name="geometry">
+       <rect>
+        <x>6</x>
+        <y>2</y>
+        <width>171</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="text">
+       <string>../CACHE</string>
+      </property>
+     </widget>
+    </widget>
    </widget>
   </widget>
   <widget class="QToolButton" name="button_apply">

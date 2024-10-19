@@ -1,16 +1,81 @@
 import json
 import sys
 import gui
-from PyQt5 import QtWidgets
+import config
+
+from PyQt5 import QtWidgets,QtGui
 from PyQt5.QtWidgets import QFileDialog
 from FunctionRequest import func_request
 from ConfigWrite import Config
-#pyuic5 0901.ui -o gui2.py
+
+#pyuic5 1015.ui -o config.py
 #1 - NM_003319:c.65555find
 #2 - NM_003319:c.2_3del
 #3 - NM_001267550:c.92353-2A>C
 #4 - NM_003319:c.1_2insTG
 #5 - NM_003319:c.16argT
+
+class SettingUI(QtWidgets.QDialog, config.Ui_Settings):
+    def __init__(self, config):    
+        super().__init__()
+        self.setupUi(self)
+        self.config = config
+
+        self.ReadConfigForText(self.config.__dict__)
+        self.ReadConfigForColor()
+
+        self.button_diff.clicked.connect(self.get_color_diff)
+        self.button_base.clicked.connect(self.get_color_base)
+        self.button_stop.clicked.connect(self.get_color_stop)
+        self.button_find.clicked.connect(self.get_color_find)
+
+        self.button_apply.clicked.connect(self.Apply)
+        self.button_reset.clicked.connect(self.Reset)
+
+    def get_html_code(self, string):
+        return ''.join(string.split('color: ')[1][:7])
+
+    def get_color_diff(self):
+        old_name = self.difference_color_text.text()
+        self.difference_color_text.setText(QtWidgets.QColorDialog().getColor(QtGui.QColor(old_name)).name())
+        self.ReadConfigForColor()
+    def get_color_base(self):
+        old_name = self.base_color_text.text()
+        self.base_color_text.setText(QtWidgets.QColorDialog().getColor(QtGui.QColor(old_name)).name())
+        self.ReadConfigForColor()
+    def get_color_stop(self):
+        old_name = self.stop_color_text.text()
+        self.stop_color_text.setText(QtWidgets.QColorDialog().getColor(QtGui.QColor(old_name)).name())
+        self.ReadConfigForColor()
+    def get_color_find(self):
+        old_name = self.find_color_text.text()
+        self.find_color_text.setText(QtWidgets.QColorDialog().getColor(QtGui.QColor(old_name)).name())
+        self.ReadConfigForColor()
+
+    def ReadConfigForText(self, dictionary):
+        self.base_color_text.setText(self.get_html_code(dictionary["base_color_text"]))
+        self.difference_color_text.setText(self.get_html_code(dictionary["difference_color_text"]))
+        self.stop_color_text.setText(self.get_html_code(dictionary["stop_color_text"]))
+        self.find_color_text.setText(self.get_html_code(dictionary["find_color_text"]))
+
+    def ReadConfigForColor(self):
+        self.base_color.setStyleSheet(f"background-color: {self.base_color_text.text()}")
+        self.diff_color.setStyleSheet(f"background-color: {self.difference_color_text.text()}")
+        self.find_color.setStyleSheet(f"background-color: {self.find_color_text.text()}")
+        self.stop_color.setStyleSheet(f"background-color: {self.stop_color_text.text()}")
+
+    def Apply(self):
+        self.config.base_color_text = "<span style=\"color: " + self.base_color_text.text() + ";\">"
+        self.config.difference_color_text = "<span style=\"color: " + self.difference_color_text.text() + ";\">"
+        self.config.find_color_text = "<span style=\"color: " + self.find_color_text.text() + ";\">"
+        self.config.stop_color_text = "<span style=\"color: " + self.stop_color_text.text() + ";\">"
+
+        self.config.apply_settings()
+    def Reset(self):
+        self.config.return_default()
+        self.ReadConfigForText(self.config.__dict__)
+        self.ReadConfigForColor()
+
 
 class MainWindow(QtWidgets.QMainWindow, gui.Ui_MainWindow):
     def __init__(self):
@@ -38,6 +103,8 @@ class MainWindow(QtWidgets.QMainWindow, gui.Ui_MainWindow):
         self.ResultExon.clicked.connect(self.res_exon)
         self.NewNameExon.textChanged.connect(self.change_exon)
         self.CountExon.textChanged.connect(self.change_exon)
+
+        self.Button.clicked.connect(self.OpenWindowSetting)
 
     def change_request(self):
         self.CheckResultRequest.setChecked(False)
@@ -140,6 +207,13 @@ class MainWindow(QtWidgets.QMainWindow, gui.Ui_MainWindow):
         new_file.write(str(count_string) + ' ' + str(self.CountExon.text()) + '\n')
         new_file.write(all_string)
         new_file.close()
+
+    def OpenWindowSetting(self):
+        setting = SettingUI(self.config)
+        setting.exec_()
+        setting.show()
+
+        
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication([])

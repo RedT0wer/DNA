@@ -13,6 +13,7 @@ class Config:
         json_data.close()
         
         dictionary["custom"] = dictionary["default"]
+        self.__dict__ = dictionary["custom"]
 
         json_data = open("Configuration.json","w")
         json_data.write(json.dumps(dictionary))

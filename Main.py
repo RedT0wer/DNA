@@ -28,6 +28,7 @@ class SettingUI(QtWidgets.QDialog, config.Ui_Settings):
         self.button_base.clicked.connect(self.get_color_base)
         self.button_stop.clicked.connect(self.get_color_stop)
         self.button_find.clicked.connect(self.get_color_find)
+        self.button_path.clicked.connect(self.get_path)
 
         self.button_apply.clicked.connect(self.Apply)
         self.button_reset.clicked.connect(self.Reset)
@@ -51,6 +52,9 @@ class SettingUI(QtWidgets.QDialog, config.Ui_Settings):
         old_name = self.find_color_text.text()
         self.find_color_text.setText(QtWidgets.QColorDialog().getColor(QtGui.QColor(old_name)).name())
         self.ReadConfigForColor()
+    def get_path(self):
+        menu = QFileDialog.getExistingDirectory(self,"Select folder",self.path_folder.text())
+        self.path_folder.setText(menu)
 
     def ReadConfigForText(self, dictionary):
         self.base_color_text.setText(self.get_html_code(dictionary["base_color_text"]))
@@ -58,6 +62,7 @@ class SettingUI(QtWidgets.QDialog, config.Ui_Settings):
         self.stop_color_text.setText(self.get_html_code(dictionary["stop_color_text"]))
         self.find_color_text.setText(self.get_html_code(dictionary["find_color_text"]))
         self.line_fontsize.setText(dictionary["font_size"][:-2])
+        self.path_folder.setText(dictionary["path_folder_cache"])
 
     def ReadConfigForColor(self):
         self.base_color.setStyleSheet(f"background-color: {self.base_color_text.text()}")

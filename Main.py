@@ -1,4 +1,4 @@
-import json
+﻿import json
 import sys
 import gui
 import config
@@ -22,7 +22,12 @@ class SettingUI(QtWidgets.QDialog, config.Ui_Settings):
         self.config = config
 
         self.ReadConfigForText(self.config.__dict__)
-        self.ReadConfigForColor()
+        self.ReadConfigForColor() 
+
+
+        self.horizontalScrollBar.valueChanged.connect(self.on_value_changed)
+        self.horizontalScrollBar.setRange(0,100)
+        
 
         self.button_diff.clicked.connect(self.get_color_diff)
         self.button_base.clicked.connect(self.get_color_base)
@@ -32,6 +37,9 @@ class SettingUI(QtWidgets.QDialog, config.Ui_Settings):
 
         self.button_apply.clicked.connect(self.Apply)
         self.button_reset.clicked.connect(self.Reset)
+
+    def on_value_changed(self, value):
+        self.path_folder.setStyleSheet(f"background-color: rgba(255, 255, 255, 0);margin-left: {-value}px;")
 
     def get_html_code(self, string):
         return ''.join(string.split('color: ')[1][:7])

@@ -1,10 +1,10 @@
 ﻿import os
 
 
-def build_sequense(filename,string,avg):
+def build_sequense(filename,string,avg,config):
     filename = filename.split('/')
 
-    path_folder = os.getcwd() + '\\CACHE\\' + 'CACHE_' + filename[-1]
+    path_folder = config.path_folder_cache + '\CACHE_' + filename[-1]
 
     if not os.path.exists(path_folder):
         f = open(path_folder,"w")

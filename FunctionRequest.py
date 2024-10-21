@@ -1,11 +1,6 @@
 ﻿from CreateDatabase import build_all_database,find_block_v2,write_block
 from Replace3_1 import build_sequense,transform_mutation
 
-class Color:
-    red = '<span style="color: red;">'
-    pink = '<span style="color: #FF1493;">'
-    light_blue = '<span style="color: blue;">'
-    base = '<span style="color: black;">'
 
 def build_array(filename):
     f = open(filename,'r')
@@ -139,34 +134,34 @@ def find_stop(mod,index,arr_str,string):
 def border_check(string,index,d):
     return string[index] + string[index + 1] + string[index + 2] in d
 
-def output_exon(index_letter,letter,index_stop,string1,curr):
+def output_exon(index_letter,letter,index_stop,string1,curr,config):
     string = ''
     for i in range(len(string1)):
         if not curr:
             if i == index_letter:
-                string += Color.red + letter + Color.base
+                string += config.stop_color_text + letter + config.base_color_text
             if i == index_stop:
-                string += Color.pink
+                string += config.find_color_text
             if i == index_stop + 3:
-                string += Color.base
+                string += config.base_color_text
         elif curr == -2:
             if i == index_letter:
-                string += Color.red + letter + '('
+                string += config.stop_color_text + letter + '('
             if i == index_letter + 1:
-                string += ')' + Color.base
+                string += ')' + config.base_color_text
             if i == index_stop:
-                string += Color.pink
+                string += config.find_color_text
             if i == index_stop + 3:
-                string += Color.base
+                string += config.base_color_text
         else:
             if i == index_letter:
-                string += Color.red
+                string += config.stop_color_text
             elif i == index_letter + curr:
-                string += Color.base
+                string += config.base_color_text
             if i == index_stop:
-                string += Color.pink
+                string += config.find_color_text
             elif i == index_stop + 3:
-                string += Color.base
+                string += config.base_color_text
         string += string1[i]
     return string
 
@@ -182,7 +177,7 @@ def transform_bef_string(string,avg,*args):
     elif args[0] == '-':
         return string[avg:args[1]] + string[args[2]:]
 
-def output_block(obj1,st1,end1,obj2):
+def output_block(obj1,st1,end1,obj2,config):
     string = ''
     for i in range(0,min([len(obj1),len(obj2)])):
         if obj1[st1 + i] != obj2[i]:
@@ -191,33 +186,33 @@ def output_block(obj1,st1,end1,obj2):
     ind = i
     for i in range(st1,ind + st1):
         string += obj1[i]
-    string += Color.red
+    string += config.stop_color_text
     for i in range(ind + st1,end1):
         string += obj1[i]
 
-    string += Color.base
+    string += config.base_color_text
     string += '<br>'
 
     for i in range(0,ind):
         string += obj2[i]
-    string += Color.light_blue
+    string += config.difference_color_text
     for i in range(ind,len(obj2)):
         string += obj2[i]
-    string += Color.base
+    string += config.base_color_text
     return string + '<br>'
 
 
-def one(request,file_orig,file_req):
+def one(request,file_orig,file_req,config):
     arr_len, arr_str, bef_string, num, len_num, avg, ost = read_request(request,file_req)
 
-    build_sequense(file_req,bef_string,avg)
+    build_sequense(file_req,bef_string,avg,config)
 
     index_target_str_in_arr_str = binary_search_left(arr_len,num + avg) #индекс целевого Экзона в массиве arr_str
     index_num_in_target_str = calcul_index_letter(index_target_str_in_arr_str,num - 1 + avg,arr_len) #индекс искомого номера/начала диапазона в целевом Экзоне строке
 
     target_str,letter = build_string(arr_str[index_target_str_in_arr_str],index_num_in_target_str,0,'') #целевой Экзон и строка из удаляемых символов(если удаляли)
 
-    database,arr_start,aft_string = build_all_database(file_orig,file_req)
+    database,arr_start,aft_string = build_all_database(file_orig,file_req,config)
     num_for_arr_start = (num - 1) // 3
     name_block,st1,end1 = find_block_v2(database,arr_start,aft_string,num_for_arr_start + 1) 
 
@@ -225,15 +220,15 @@ def one(request,file_orig,file_req):
     mutation_string = transform_mutation(st1 * 3, bef_string)
 
     string = name_block + '<br>'
-    string += write_block(0,end1 - st1,num_for_arr_start + 1 - st1,mutation_string,'')
+    string += write_block(0,end1 - st1,num_for_arr_start + 1 - st1,mutation_string,'',config)
     if name_block != 'Номер за пределами':
         string += f"Экзон: {index_target_str_in_arr_str + 1}<br>"
-        string += output_exon(index_num_in_target_str,letter,-1,target_str,1)
+        string += output_exon(index_num_in_target_str,letter,-1,target_str,1,config)
     return string
 
-def two(request,file_orig,file_req):
+def two(request,file_orig,file_req,config):
     arr_len, arr_str, bef_string, num, len_num, avg, ost = read_request(request,file_req)
-    build_sequense(file_req,bef_string,avg)
+    build_sequense(file_req,bef_string,avg,config)
 
     index_target_str_in_arr_str = binary_search_left(arr_len,num + avg) #индекс целевого Экзона в массиве arr_str
     mod = calcul_mod(index_target_str_in_arr_str,arr_len,avg) #лишние элементы в начале строки
@@ -242,7 +237,7 @@ def two(request,file_orig,file_req):
     target_str,letter = build_string(arr_str[index_target_str_in_arr_str],index_num_in_target_str,len_num,'') #целевой Экзон и строка из удаляемых символов(если удаляли)
     target_str,end,index_stop = find_stop(mod,index_target_str_in_arr_str,arr_str,target_str) 
 
-    database,arr_start,aft_string = build_all_database(file_orig,file_req)
+    database,arr_start,aft_string = build_all_database(file_orig,file_req,config)
     num_for_arr_start = (num - 1) // 3
     name_block,st1,end1 = find_block_v2(database,arr_start,aft_string,num_for_arr_start + 1) 
     
@@ -250,19 +245,19 @@ def two(request,file_orig,file_req):
     mutation_string = transform_mutation(st1 * 3, bef_string)    
 
     string = name_block + '<br>'
-    string += output_block(aft_string,st1,end1,mutation_string)
+    string += output_block(aft_string,st1,end1,mutation_string,config)
 
     if index_stop == -1:
         string += f"Экзон: {index_target_str_in_arr_str + 1}<br>Конца нет<br>"
     else:
         string += f"Экзон: {index_target_str_in_arr_str + 1}<br>Стоп в: {end + 1}<br>"
 
-    string += output_exon(index_num_in_target_str,letter,index_stop,target_str,0)
+    string += output_exon(index_num_in_target_str,letter,index_stop,target_str,0,config)
     return string
 
-def three(request,file_orig,file_req):
+def three(request,file_orig,file_req,config):
     arr_len, arr_str, bef_string, num, len_num, avg, ost = read_request(request,file_req)
-    build_sequense(file_req,bef_string,avg)
+    build_sequense(file_req,bef_string,avg,config)
 
     index_target_str_in_arr_str = binary_search_left(arr_len,num + avg) #индекс целевого Экзона в массиве arr_str
     mod = calcul_mod_v2(index_target_str_in_arr_str,arr_len,avg) #лишние элементы в начале строки
@@ -270,7 +265,7 @@ def three(request,file_orig,file_req):
     target_str = build_string_v2(arr_str,index_target_str_in_arr_str,arr_len,avg) #целевой Экзон и строка из удаляемых символов(если удаляли)
     target_str,end,index_stop = find_stop(mod,index_target_str_in_arr_str + 1,arr_str,target_str) 
 
-    database,arr_start,aft_string = build_all_database(file_orig,file_req)
+    database,arr_start,aft_string = build_all_database(file_orig,file_req,config)
     num_for_arr_start = (arr_len[max(index_target_str_in_arr_str - 1,0)] + mod - 1 - avg) // 3 
     name_block,st1,end1 = find_block_v2(database,arr_start,aft_string,num_for_arr_start + 1) 
     
@@ -278,19 +273,19 @@ def three(request,file_orig,file_req):
     mutation_string = transform_mutation(st1 * 3, bef_string)    
 
     string = name_block + '<br>'
-    string += output_block(aft_string,st1,end1,mutation_string)
+    string += output_block(aft_string,st1,end1,mutation_string,config)
 
     if index_stop == -1:
         string += f"Удален Экзон: {index_target_str_in_arr_str + 1}<br>Конца нет<br>"
     else:
         string += f"Удален Экзон: {index_target_str_in_arr_str + 1}<br>Стоп в: {end + 1}<br>"
 
-    string += output_exon(-1,'',index_stop,target_str,0)
+    string += output_exon(-1,'',index_stop,target_str,0,config)
     return string
 
-def four(request,file_orig,file_req):
+def four(request,file_orig,file_req,config):
     arr_len, arr_str, bef_string, num, len_num, avg, ost = read_request(request,file_req)
-    build_sequense(file_req,bef_string,avg)
+    build_sequense(file_req,bef_string,avg,config)
 
     index_target_str_in_arr_str = binary_search_left(arr_len,num + avg) #индекс целевого Экзона в массиве arr_str
     mod = calcul_mod(index_target_str_in_arr_str,arr_len,avg) #лишние элементы в начале строки
@@ -299,7 +294,7 @@ def four(request,file_orig,file_req):
     target_str,letter = build_string(arr_str[index_target_str_in_arr_str],index_num_in_target_str + 1,0,ost) #целевой Экзон и строка из удаляемых символов(если удаляли)
     target_str,end,index_stop = find_stop(mod,index_target_str_in_arr_str,arr_str,target_str) 
 
-    database,arr_start,aft_string = build_all_database(file_orig,file_req)
+    database,arr_start,aft_string = build_all_database(file_orig,file_req,config)
     num_for_arr_start = (num - 1) // 3
     name_block,st1,end1 = find_block_v2(database,arr_start,aft_string,num_for_arr_start + 1) 
     
@@ -307,26 +302,26 @@ def four(request,file_orig,file_req):
     mutation_string = transform_mutation(st1 * 3, bef_string)    
 
     string = name_block + '<br>'
-    string += output_block(aft_string,st1,end1,mutation_string)
+    string += output_block(aft_string,st1,end1,mutation_string,config)
 
     if index_stop == -1:
         string += f"Экзон: {index_target_str_in_arr_str + 1}<br>Конца нет<br>"
     else:
         string += f"Экзон: {index_target_str_in_arr_str + 1}<br>Стоп в: {end + 1}<br>"
 
-    string += output_exon(index_num_in_target_str + 1,'',index_stop,target_str,len(ost))
+    string += output_exon(index_num_in_target_str + 1,'',index_stop,target_str,len(ost),config)
     return string
 
-def five(request,file_orig,file_req):
+def five(request,file_orig,file_req,config):
     arr_len, arr_str, bef_string, num, len_num, avg, ost = read_request(request,file_req)
-    build_sequense(file_req,bef_string,avg)
+    build_sequense(file_req,bef_string,avg,config)
 
     index_target_str_in_arr_str = binary_search_left(arr_len,num + avg) #индекс целевого Экзона в массиве arr_str
     index_num_in_target_str = calcul_index_letter(index_target_str_in_arr_str,num - 1 + avg,arr_len) #индекс искомого номера/начала диапазона в целевом Экзоне строке
     
     target_str,letter = build_string(arr_str[index_target_str_in_arr_str],index_num_in_target_str,len_num,ost) #целевой Экзон и строка из удаляемых символов(если удаляли)
 
-    database,arr_start,aft_string = build_all_database(file_orig,file_req)
+    database,arr_start,aft_string = build_all_database(file_orig,file_req,config)
     num_for_arr_start = (num - 1) // 3
     name_block,st1,end1 = find_block_v2(database,arr_start,aft_string,num_for_arr_start + 1) 
     
@@ -334,25 +329,25 @@ def five(request,file_orig,file_req):
     mutation_string = transform_mutation(st1 * 3, bef_string)    
 
     string = name_block + '<br>'
-    string += write_block(0,min(len(mutation_string),end1 - st1),num_for_arr_start + 1 - st1,mutation_string, aft_string[num_for_arr_start])
+    string += write_block(0,min(len(mutation_string),end1 - st1),num_for_arr_start + 1 - st1,mutation_string, aft_string[num_for_arr_start],config)
 
     string += f"Экзон: {index_target_str_in_arr_str + 1}<br>"
 
-    string += output_exon(index_num_in_target_str,letter,-1,target_str,-2)
+    string += output_exon(index_num_in_target_str,letter,-1,target_str,-2,config)
     return string
 
-def func_request(request,orig,file_req):
+def func_request(request,orig,file_req, config):
     if 'find' in request:
-        return one(request,orig,file_req)
+        return one(request,orig,file_req,config)
 
     elif 'del' in request:
-        return two(request,orig,file_req)
+        return two(request,orig,file_req,config)
 
     elif '+' in request or '-' in request:
-        return three(request,orig,file_req)
+        return three(request,orig,file_req,config)
 
     elif 'ins' in request:
-        return four(request,orig,file_req)
+        return four(request,orig,file_req,config)
 
     elif 'arg' in request:
-        return five(request,orig,file_req)
+        return five(request,orig,file_req,config)

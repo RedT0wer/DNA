@@ -1,23 +1,18 @@
 ﻿import os
 
-class Color:
-    red = '<span style="color: red;">'
-    pink = '<span style="color: #FF1493;">'
-    light_blue = '<span style="color: blue;">'
-    base = '<span style="color: black;">'
 
-def build_all_database(filename_orig,file_not_orig): #работает НЕ с 4 буквенной строкой
+def build_all_database(filename_orig,file_not_orig,config): #работает НЕ с 4 буквенной строкой
     orig = open(filename_orig,"r")
     database_orig = eval(orig.readline())
     orig.close()
 
     filename_not_orig = file_not_orig.split('/')
-    path_cache_not_orig = os.getcwd() + '\\CACHE\\' + 'CACHE_' + filename_not_orig[-1]
+    path_cache_not_orig = config.path_folder_cache + '\CACHE_' + filename_not_orig[-1]
 
     cache_not_orig = open(path_cache_not_orig,"r")
 
     filename_check = file_not_orig.split('/')
-    path_filename_check = os.getcwd() + '\\CACHE\\' + 'DICT_' + filename_check[-1]
+    path_filename_check = config.path_folder_cache + '\DICT_' + filename_check[-1]
 
     if os.path.exists(path_filename_check):
         dict_not_orig = open(path_filename_check,"r")
@@ -73,13 +68,13 @@ def binary_search_right(arr,target):
             left = mid + 1
     return right
 
-def write_block(st,end,index,string1,sub_str):
+def write_block(st,end,index,string1,sub_str,config):
     string = ''
     for i in range(st,end):
         if sub_str != '' and i == index-1:
-            string += f'{Color.red}{sub_str}({string1[i]}){Color.base}'
+            string += f'{config.stop_color_text}{sub_str}({string1[i]}){config.base_color_text}'
         elif i == index-1:
-            string += f'{Color.red}{string1[i]}{Color.base}'
+            string += f'{config.stop_color_text}{string1[i]}{config.base_color_text}'
         else:
             string += string1[i]
     return string + '<br>'
@@ -105,36 +100,3 @@ def find_block_v2(database,arr_start,string,num):
                 return (f'{database[arr_start[index_st]][1]} -> Соединение -> {database[arr_start[index_st+1]][1]}',database[arr_start[index_st]][0], arr_start[index_st + 1] - 1)
     else:
         return ('Ни одного блока', 0, len(string))
-
-def find_block(database,arr_start,string,num):
-    try:
-        if num <= 0 or num > len(string):
-            print(f'Номер за пределами [1:{len(string)}]')
-
-        elif 1 <= num < arr_start[0]:
-            print(f'Соединение -> {database[arr_start[0]][1]} ')
-            write_block(0, arr_start[0]-1, num, string,'')
-
-        elif database[arr_start[-1]][0] < num <= len(string):
-            print(f'{database[arr_start[-1]][1]} -> Соединение ')
-            write_block(database[arr_start[-1]][0], len(string), num, string,'')
-
-        else:
-            index_st = binary_search_right(arr_start,num)
-            value_st = arr_start[index_st]
-            value_end = database[arr_start[index_st]][0]
-            if value_st <= num <= value_end:
-                if index_st > 0 and database[arr_start[index_st-1]][0] >= value_st:
-                    print('Кринге ситуация!')
-                    print(database[arr_start[index_st-1]][1])
-                    write_block(arr_start[index_st-1]-1, database[arr_start[index_st-1]][0], num, string,'')
-                    print(database[arr_start[index_st]][1])
-                    write_block(value_st-1, value_end, num, string,'')
-                else:
-                    print(f'{database[arr_start[index_st]][1]}')
-                    write_block(value_st-1, value_end, num, string,'')
-            else:
-                print(f'{database[arr_start[index_st]][1]} -> Соединение -> {database[arr_start[index_st+1]][1]}')
-                write_block(database[arr_start[index_st]][0], arr_start[index_st+1]-1, num, string,'')
-    except:
-        print('Ни одного блока')

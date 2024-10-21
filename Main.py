@@ -21,7 +21,7 @@ class SettingUI(QtWidgets.QDialog, config.Ui_Settings):
         self.setupUi(self)
         self.config = config
 
-        self.ReadConfigForText(self.config.__dict__)
+        self.ReadConfigForText(self.config)
         self.ReadConfigForColor()         
 
         self.button_diff.clicked.connect(self.get_color_diff)
@@ -71,13 +71,13 @@ class SettingUI(QtWidgets.QDialog, config.Ui_Settings):
         menu = QFileDialog.getExistingDirectory(self,"Select folder",self.path_folder.text())
         self.path_folder.setText(menu)
 
-    def ReadConfigForText(self, dictionary):
-        self.base_color_text.setText(self.get_html_code(dictionary["base_color_text"]))
-        self.difference_color_text.setText(self.get_html_code(dictionary["difference_color_text"]))
-        self.stop_color_text.setText(self.get_html_code(dictionary["stop_color_text"]))
-        self.find_color_text.setText(self.get_html_code(dictionary["find_color_text"]))
-        self.line_fontsize.setText(dictionary["font_size"][:-2])
-        self.path_folder.setText(dictionary["path_folder_cache"])
+    def ReadConfigForText(self, config):
+        self.base_color_text.setText(self.get_html_code(config.base_color_text))
+        self.difference_color_text.setText(self.get_html_code(config.difference_color_text))
+        self.stop_color_text.setText(self.get_html_code(config.stop_color_text))
+        self.find_color_text.setText(self.get_html_code(config.find_color_text))
+        self.line_fontsize.setText(config.font_size[:-2])
+        self.path_folder.setText(config.path_folder_cache)
 
     def ReadConfigForColor(self):
         self.base_color.setStyleSheet(f"background-color: {self.base_color_text.text()}")
@@ -96,7 +96,7 @@ class SettingUI(QtWidgets.QDialog, config.Ui_Settings):
         self.config.apply_settings()
     def Reset(self):
         self.config.return_default()
-        self.ReadConfigForText(self.config.__dict__)
+        self.ReadConfigForText(self.config)
         self.ReadConfigForColor()
 
 
@@ -145,7 +145,7 @@ class MainWindow(QtWidgets.QMainWindow, gui.Ui_MainWindow):
     def res_request(self):
         if self.FilenameTxtRequest.text() and self.FilenameTxtRequest1.text() and self.LineEditRequest.text():
             try:
-                output = func_request(self.LineEditRequest.text(),self.path_origin_request,self.path_txt_request)
+                output = func_request(self.LineEditRequest.text(),self.path_origin_request,self.path_txt_request, self.config)
                 self.TextResult.setHtml(f"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:{self.config.font_size}; font-weight:400; font-style:normal;\">\n<span>{output}</span></body></html>")
                 self.CheckResultRequest.setChecked(True)
                 self.CheckFailRequest.setChecked(False)

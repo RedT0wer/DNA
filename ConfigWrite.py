@@ -1,9 +1,11 @@
 import json
+import os
 
 class Config:
     def __init__(self):
         json_data = open("Configuration.json","r")
-        dictionary = json.load(json_data)
+        self.init_folder()
+        dictionary = json.load(json_data)        
         self.__dict__ = dictionary['custom']
         json_data.close()
 
@@ -25,6 +27,17 @@ class Config:
         json_data.close()
         
         dictionary["custom"] = self.__dict__
+
+        json_data = open("Configuration.json","w")
+        json_data.write(json.dumps(dictionary))
+        json_data.close()
+
+    def init_folder(self):
+        json_data = open("Configuration.json","r")
+        dictionary = json.load(json_data)
+        json_data.close()
+        
+        dictionary["default"]["path_folder_cache"] = os.getcwd() + '\\CACHE'
 
         json_data = open("Configuration.json","w")
         json_data.write(json.dumps(dictionary))

@@ -37,6 +37,8 @@ class Config:
         dictionary = json.load(json_data)
         json_data.close()
         
+        if dictionary["custom"]["path_folder_cache"] ==  "..\\CACHE\\": 
+            dictionary["custom"]["path_folder_cache"] = os.getcwd() + '\\CACHE'
         dictionary["default"]["path_folder_cache"] = os.getcwd() + '\\CACHE'
 
         json_data = open("Configuration.json","w")

@@ -1,5 +1,5 @@
 ﻿from CreateDatabase import build_all_database,find_block_v2,write_block
-from Replace3_1 import build_sequense,transform_mutation,transform_string
+from Replace3_1 import build_sequense,transform_mutation
 from Web import *
 
 def test1(identifier):

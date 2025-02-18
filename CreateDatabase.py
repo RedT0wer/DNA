@@ -1,10 +1,29 @@
-﻿import os
+﻿from Web import *
+import os
+
+def test2(identifier):
+    seq = ProteinReader()
+    seq.read_sequense(identifier)
+    s = seq.get_sequense()
+
+    dom = ProteinDomainReader()
+    dom.read_domains(identifier)
+    d = dom.get_domains()
+
+    for st in d:
+        end = d[st][0]
+        d[st].append(s[st:end])
+    
+    return d
 
 
 def build_all_database(filename_orig,file_not_orig,config): #работает НЕ с 4 буквенной строкой
-    orig = open(filename_orig,"r")
-    database_orig = eval(orig.readline())
-    orig.close()
+    #orig = open(filename_orig,"r")
+    #database_orig = eval(orig.readline())
+    #orig.close()
+
+    database_orig = test2(filename_orig)
+
 
     filename_not_orig = file_not_orig.split('/')
     path_cache_not_orig = config.path_folder_cache + '\CACHE_' + filename_not_orig[-1]

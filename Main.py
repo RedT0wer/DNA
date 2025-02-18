@@ -9,6 +9,7 @@ from FunctionRequest import func_request
 from ConfigWrite import Config
 
 #pyuic5 1015.ui -o config.py
+#ENST00000460472
 #1 - NM_003319:c.65555find
 #2 - NM_003319:c.2_3del
 #3 - NM_001267550:c.92353-2A>C
@@ -145,11 +146,12 @@ class MainWindow(QtWidgets.QMainWindow, gui.Ui_MainWindow):
     def res_request(self):
         if self.FilenameTxtRequest.text() and self.FilenameTxtRequest1.text() and self.LineEditRequest.text():
             try:
-                output = func_request(self.LineEditRequest.text(),self.path_origin_request,self.path_txt_request, self.config)
+                output = func_request(self.LineEditRequest.text(),self.FilenameTxtRequest.text(),self.FilenameTxtRequest1.text(), self.config)
                 self.TextResult.setHtml(f"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:{self.config.font_size}; font-weight:400; font-style:normal;\">\n<span>{output}</span></body></html>")
                 self.CheckResultRequest.setChecked(True)
                 self.CheckFailRequest.setChecked(False)
-            except:
+            except Exception as s:
+                print(s)
                 self.CheckFailRequest.setChecked(True)
 
     def change_origin(self):
@@ -171,7 +173,8 @@ class MainWindow(QtWidgets.QMainWindow, gui.Ui_MainWindow):
                 self.create_file_origin(self.NewNameOrigin.text() + '.txt')
                 self.CheckResultOrigin.setChecked(True)
                 self.CheckFailOrigin.setChecked(False)
-            except:
+            except Exception as s:
+                print(s)
                 self.CheckFailOrigin.setChecked(True)
     def create_file_origin(self, new_name):
         sequence = open(self.path_txt_origin,'r').readline()

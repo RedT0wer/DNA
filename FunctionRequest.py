@@ -1,6 +1,25 @@
 ﻿from CreateDatabase import build_all_database,find_block_v2,write_block
-from Replace3_1 import build_sequense,transform_mutation
+from Replace3_1 import build_sequense,transform_mutation,transform_string
+from Web import *
 
+def test1(identifier):
+    exons = ExonReader()
+    exons.read_exons(identifier)
+
+    sequense = SequenseExonReader()
+    sequense.read_sequense(identifier)
+    
+    arr_str = []
+    arr_len = []
+    ind = 0
+    arr_as = exons.get_exons() 
+    for i in range(len(arr_as)):
+        arr_str.append(sequense.get_sequense()[ind:ind + arr_as[i]])
+        ind += arr_as[i]
+        arr_len.append(ind)
+
+    t = (arr_len, arr_str, sequense.get_sequense(), sequense.get_extra()[0])
+    return t
 
 def build_array(filename):
     f = open(filename,'r')
@@ -18,7 +37,7 @@ def build_array(filename):
 def binary_search_left(arr,target):
     left,right = 0,len(arr)-1
     while left <= right:
-        mid = left + (right - left)//2
+        mid = left + (right - left) // 2
         if arr[mid] == target:
             return mid
         elif arr[mid] > target:
@@ -29,7 +48,7 @@ def binary_search_left(arr,target):
 
 def read_request(request,file_req):
     filename_orig,ost = request.split(':c.')
-
+    
     if 'del' in ost:
         nums,ost = ost.split('del') 
     elif 'ins' in ost:
@@ -43,7 +62,9 @@ def read_request(request,file_req):
     elif 'arg' in ost:
         nums,ost = ost.split('arg')
 
-    arr_len, arr_str, string, avg = build_array(file_req)
+    #arr_len, arr_str, string, avg = build_array(file_req)
+    arr_len, arr_str, string, avg = test1(file_req)
+
     num,len_num = nums,1
     if '_' in nums:
         nums = nums.split('_')
@@ -205,7 +226,7 @@ def output_block(obj1,st1,end1,obj2,config):
 def one(request,file_orig,file_req,config):
     arr_len, arr_str, bef_string, num, len_num, avg, ost = read_request(request,file_req)
 
-    build_sequense(file_req,bef_string,avg,config)
+    build_sequense(file_req,bef_string,avg,config)    
 
     index_target_str_in_arr_str = binary_search_left(arr_len,num + avg) #индекс целевого Экзона в массиве arr_str
     index_num_in_target_str = calcul_index_letter(index_target_str_in_arr_str,num - 1 + avg,arr_len) #индекс искомого номера/начала диапазона в целевом Экзоне строке
@@ -313,8 +334,8 @@ def four(request,file_orig,file_req,config):
     return string
 
 def five(request,file_orig,file_req,config):
-    arr_len, arr_str, bef_string, num, len_num, avg, ost = read_request(request,file_req)
-    build_sequense(file_req,bef_string,avg,config)
+    arr_len, arr_str, build_sequensebef_string, num, len_num, avg, ost = read_request(request,file_req)
+    #build_sequense(file_req,bef_string,avg,config)
 
     index_target_str_in_arr_str = binary_search_left(arr_len,num + avg) #индекс целевого Экзона в массиве arr_str
     index_num_in_target_str = calcul_index_letter(index_target_str_in_arr_str,num - 1 + avg,arr_len) #индекс искомого номера/начала диапазона в целевом Экзоне строке

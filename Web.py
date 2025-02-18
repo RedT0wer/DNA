@@ -18,7 +18,7 @@ class ExonReader:
             response_json = response.json()
             return response_json["Exon"]
         else:
-            raise Exception("read_exons - id")
+            raise Exception(f"ExonReader - {response.status_code} / identifier - {identifier}")
 
     def __processing_exons(self) -> None:
         for i in range(len(self.__exons)):
@@ -52,22 +52,24 @@ class SequenseExonReader:
             response_json = response.json()
             return response_json["seq"]
         else:
-            raise Exception("read_sequence - id")
+            raise Exception(f"SequenseExonReader - {response.status_code}")
 
-    def __processing_sequense(self, seq) -> None:
+    def __processing_sequense(self, seq) -> str:
+        seq = list(seq)
         self.__seq_st(seq)
         self.__seq_end(seq)
+        return ''.join(seq)
 
     def __seq_st(self, seq) -> None:
         ind = 0
         while seq[ind].islower():
-            seq[ind].upper()
+            seq[ind] = seq[ind].upper()
             ind += 1
 
     def __seq_end(self, seq) -> None:
         ind = len(seq) - 1
         while seq[ind].islower():
-            seq[ind].upper()
+            seq[ind] = seq[ind].upper()
             ind -= 1
 
     def __processing_extra(self, seq) -> None:
@@ -89,8 +91,8 @@ class SequenseExonReader:
     def read_sequense(self, identifier) -> None:
         cdna = self.__read_url(identifier, "cdna")
         self.__processing_extra(cdna)
-        self.__processing_sequense(cdna)
-        self.__sequense = cdna 
+        sequence = self.__processing_sequense(cdna)
+        self.__sequense = sequence 
 
 class ProteinReader:
     def __init__(self) -> None:
@@ -106,7 +108,7 @@ class ProteinReader:
             response_json = response.json()
             return response_json["sequence"]["value"]
         else:
-            raise Exception("reader protein - id")
+            raise Exception(f"ProteinReader - {response.status_code}")
 
     def read_sequense(self, identifier) -> None:
         seq = self.__read_url(identifier)
@@ -126,7 +128,7 @@ class ProteinDomainReader:
             response_json = response.json()
             return response_json["features"]
         else:
-            raise Exception("reader protein - id")
+            raise Exception(f"ProteinDomainReader - {response.status_code}")
 
     def __processing_domains(self, domains) -> None:
         for i in range(1, len(domains)):
@@ -137,7 +139,7 @@ class ProteinDomainReader:
             end = int(domains[i]["location"]["end"]["value"])
             description = domains[i]["description"]
 
-            self.__domains[st] = [end, description, ""]
+            self.__domains[st] = [end, description]
 
     def read_domains(self, identifier) -> None:
         domains = self.__read_url(identifier)

@@ -12,7 +12,7 @@ def test2(identifier):
 
     for st in d:
         end = d[st][0]
-        d[st].append(s[st:end])
+        d[st].append(s[st - 1:end])
     
     return d
 

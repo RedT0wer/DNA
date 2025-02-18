@@ -46,21 +46,19 @@ def binary_search_left(arr,target):
             left = mid + 1
     return left
 
-def read_request(request,file_req):
-    filename_orig,ost = request.split(':c.')
-    
-    if 'del' in ost:
-        nums,ost = ost.split('del') 
-    elif 'ins' in ost:
-        nums,ost = ost.split('ins') 
-    elif '+' in ost:
-        nums,ost = ost.split('+') 
-    elif '-' in ost:
-        nums,ost = ost.split('-')
-    elif 'find' in ost:
-        nums,ost = ost.split('find')
-    elif 'arg' in ost:
-        nums,ost = ost.split('arg')
+def read_request(request,file_req):    
+    if 'del' in request:
+        nums,request = request.split('del') 
+    elif 'ins' in request:
+        nums,request = request.split('ins') 
+    elif '+' in request:
+        nums,request = request.split('+') 
+    elif '-' in request:
+        nums,request = request.split('-')
+    elif 'find' in request:
+        nums,request = request.split('find')
+    elif 'arg' in request:
+        nums,request = request.split('arg')
 
     #arr_len, arr_str, string, avg = build_array(file_req)
     arr_len, arr_str, string, avg = test1(file_req)
@@ -73,7 +71,7 @@ def read_request(request,file_req):
     else: 
         num = int(nums)
 
-    return (arr_len, arr_str, string, num, len_num, avg, ost)
+    return (arr_len, arr_str, string, num, len_num, avg, request)
 
 def calcul_mod(index,arr_len,avg):
     i_st = binary_search_left(arr_len,avg)
@@ -224,7 +222,7 @@ def output_block(obj1,st1,end1,obj2,config):
 
 
 def one(request,file_orig,file_req,config):
-    arr_len, arr_str, bef_string, num, len_num, avg, ost = read_request(request,file_req)
+    arr_len, arr_str, bef_string, num, len_num, avg, request = read_request(request,file_req)
 
     build_sequense(file_req,bef_string,avg,config)    
 
@@ -248,7 +246,7 @@ def one(request,file_orig,file_req,config):
     return string
 
 def two(request,file_orig,file_req,config):
-    arr_len, arr_str, bef_string, num, len_num, avg, ost = read_request(request,file_req)
+    arr_len, arr_str, bef_string, num, len_num, avg, request = read_request(request,file_req)
     build_sequense(file_req,bef_string,avg,config)
 
     index_target_str_in_arr_str = binary_search_left(arr_len,num + avg) #индекс целевого Экзона в массиве arr_str
@@ -277,7 +275,7 @@ def two(request,file_orig,file_req,config):
     return string
 
 def three(request,file_orig,file_req,config):
-    arr_len, arr_str, bef_string, num, len_num, avg, ost = read_request(request,file_req)
+    arr_len, arr_str, bef_string, num, len_num, avg, request = read_request(request,file_req)
     build_sequense(file_req,bef_string,avg,config)
 
     index_target_str_in_arr_str = binary_search_left(arr_len,num + avg) #индекс целевого Экзона в массиве arr_str
@@ -305,21 +303,21 @@ def three(request,file_orig,file_req,config):
     return string
 
 def four(request,file_orig,file_req,config):
-    arr_len, arr_str, bef_string, num, len_num, avg, ost = read_request(request,file_req)
+    arr_len, arr_str, bef_string, num, len_num, avg, request = read_request(request,file_req)
     build_sequense(file_req,bef_string,avg,config)
 
     index_target_str_in_arr_str = binary_search_left(arr_len,num + avg) #индекс целевого Экзона в массиве arr_str
     mod = calcul_mod(index_target_str_in_arr_str,arr_len,avg) #лишние элементы в начале строки
     index_num_in_target_str = calcul_index_letter(index_target_str_in_arr_str,num - 1 + avg,arr_len) #индекс искомого номера/начала диапазона в целевом Экзоне строке
     
-    target_str,letter = build_string(arr_str[index_target_str_in_arr_str],index_num_in_target_str + 1,0,ost) #целевой Экзон и строка из удаляемых символов(если удаляли)
+    target_str,letter = build_string(arr_str[index_target_str_in_arr_str],index_num_in_target_str + 1,0,request) #целевой Экзон и строка из удаляемых символов(если удаляли)
     target_str,end,index_stop = find_stop(mod,index_target_str_in_arr_str,arr_str,target_str) 
 
     database,arr_start,aft_string = build_all_database(file_orig,file_req,config)
     num_for_arr_start = (num - 1) // 3
     name_block,st1,end1 = find_block_v2(database,arr_start,aft_string,num_for_arr_start + 1) 
     
-    bef_string = transform_bef_string(bef_string,avg,'ins',num + 1,0,ost)
+    bef_string = transform_bef_string(bef_string,avg,'ins',num + 1,0,request)
     mutation_string = transform_mutation(st1 * 3, bef_string)    
 
     string = name_block + '<br>'
@@ -330,23 +328,23 @@ def four(request,file_orig,file_req,config):
     else:
         string += f"Экзон: {index_target_str_in_arr_str + 1}<br>Стоп в: {end + 1}<br>"
 
-    string += output_exon(index_num_in_target_str + 1,'',index_stop,target_str,len(ost),config)
+    string += output_exon(index_num_in_target_str + 1,'',index_stop,target_str,len(request),config)
     return string
 
 def five(request,file_orig,file_req,config):
-    arr_len, arr_str, build_sequensebef_string, num, len_num, avg, ost = read_request(request,file_req)
-    #build_sequense(file_req,bef_string,avg,config)
+    arr_len, arr_str, bef_string, num, len_num, avg, request = read_request(request,file_req)
+    build_sequense(file_req,bef_string,avg,config)
 
     index_target_str_in_arr_str = binary_search_left(arr_len,num + avg) #индекс целевого Экзона в массиве arr_str
     index_num_in_target_str = calcul_index_letter(index_target_str_in_arr_str,num - 1 + avg,arr_len) #индекс искомого номера/начала диапазона в целевом Экзоне строке
     
-    target_str,letter = build_string(arr_str[index_target_str_in_arr_str],index_num_in_target_str,len_num,ost) #целевой Экзон и строка из удаляемых символов(если удаляли)
+    target_str,letter = build_string(arr_str[index_target_str_in_arr_str],index_num_in_target_str,len_num,request) #целевой Экзон и строка из удаляемых символов(если удаляли)
 
     database,arr_start,aft_string = build_all_database(file_orig,file_req,config)
     num_for_arr_start = (num - 1) // 3
     name_block,st1,end1 = find_block_v2(database,arr_start,aft_string,num_for_arr_start + 1) 
     
-    bef_string = transform_bef_string(bef_string,avg,'arg',num,len_num,ost)
+    bef_string = transform_bef_string(bef_string,avg,'arg',num,len_num,request)
     mutation_string = transform_mutation(st1 * 3, bef_string)    
 
     string = name_block + '<br>'

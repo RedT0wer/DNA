@@ -14,13 +14,21 @@ class ExonReader:
         server = "https://rest.ensembl.org"
         ext = f"/lookup/id/{identifier}?expand=1"
         headers = {"content-type" : "application/json"}
-        response = requests.get(url=server + ext, headers=headers)
+        path_get = f"{os.getcwd()}\GET\ER_{identifier}.json"
 
-        if response.status_code == 200:
+        if not os.path.exists(path_get):
+            response = requests.get(url=server + ext, headers=headers)
             response_json = response.json()
-            return response_json["Exon"]
-        else:
-            raise Exception(f"ExonReader - {response.status_code} / identifier - {identifier}")
+
+            filename = open(path_get,"w")
+            filename.write(json.dumps(response_json))
+            filename.close()
+          
+        response = open(path_get,"r")
+        response_json = json.load(response)
+        response.close()
+
+        return response_json["Exon"]
 
     def __processing_exons(self) -> None:
         for i in range(len(self.__exons)):

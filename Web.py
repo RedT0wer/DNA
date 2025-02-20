@@ -134,12 +134,21 @@ class ProteinDomainReader:
 
     def __read_url(self, identifier) -> List[Dict]:
         url = f"https://rest.uniprot.org/uniprotkb/{identifier}.json"
-        response = requests.get(url=url)
-        if response.status_code == 200:
+        path_get = f"{os.getcwd()}\GET\PDR_{identifier}.json"
+
+        if not os.path.exists(path_get):
+            response = requests.get(url=url)
             response_json = response.json()
-            return response_json["features"]
-        else:
-            raise Exception(f"ProteinDomainReader - {response.status_code}")
+
+            filename = open(path_get,"w")
+            filename.write(json.dumps(response_json))
+            filename.close()
+          
+        response = open(path_get,"r")
+        response_json = json.load(response)
+        response.close()
+
+        return response_json["features"]
 
     def __processing_domains(self, domains) -> None:
         for i in range(1, len(domains)):

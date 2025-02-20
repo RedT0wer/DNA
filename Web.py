@@ -48,13 +48,21 @@ class SequenseExonReader:
         server = "https://rest.ensembl.org"
         ext = f"/sequence/id/{identifier}?mask_feature=1;type={type_seq}"
         headers = {"content-type" : "application/json"}
-        response = requests.get(url=server + ext, headers=headers)
+        path_get = f"{os.getcwd()}\GET\SER_{identifier}.json"
 
-        if response.status_code == 200:
+        if not os.path.exists(path_get):
+            response = requests.get(url=server + ext, headers=headers)
             response_json = response.json()
-            return response_json["seq"]
-        else:
-            raise Exception(f"SequenseExonReader - {response.status_code}")
+
+            filename = open(path_get,"w")
+            filename.write(json.dumps(response_json))
+            filename.close()
+          
+        response = open(path_get,"r")
+        response_json = json.load(response)
+        response.close()
+
+        return response_json["seq"]
 
     def __processing_sequense(self, seq) -> str:
         seq = list(seq)

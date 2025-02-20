@@ -1,5 +1,7 @@
 from typing import Dict,List
 import requests
+import os
+import json
 
 class ExonReader:
     def __init__(self) -> None:
@@ -103,12 +105,21 @@ class ProteinReader:
 
     def __read_url(self, identifier) -> str:
         url = f"https://rest.uniprot.org/uniprotkb/{identifier}.json"
-        response = requests.get(url=url)
-        if response.status_code == 200:
+        path_get = f"{os.getcwd()}\GET\PR_{identifier}.json"
+
+        if not os.path.exists(path_get):
+            response = requests.get(url=url)
             response_json = response.json()
-            return response_json["sequence"]["value"]
-        else:
-            raise Exception(f"ProteinReader - {response.status_code}")
+
+            filename = open(path_get,"w")
+            filename.write(json.dumps(response_json))
+            filename.close()
+          
+        response = open(path_get,"r")
+        response_json = json.load(response)
+        response.close()
+            
+        return response_json["sequence"]["value"]
 
     def read_sequense(self, identifier) -> None:
         seq = self.__read_url(identifier)

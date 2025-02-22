@@ -147,11 +147,12 @@ class MainWindow(QtWidgets.QMainWindow, gui.Ui_MainWindow):
     def res_request(self):
         if self.FilenameTxtRequest.text() and self.FilenameTxtRequest1.text() and self.LineEditRequest.text():
             try:
-                st = time.time()
+                st = time.perf_counter()
                 output = func_request(self.LineEditRequest.text(),self.FilenameTxtRequest.text(),self.FilenameTxtRequest1.text(), self.config)
-                self.TextResult.setHtml(f"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:{self.config.font_size}; font-weight:400; font-style:normal;\">\n<span>{output}</span><p>{time.time() - st}</p></body></html>")
+                self.TextResult.setHtml(f"<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\" \"http://www.w3.org/TR/REC-html40/strict.dtd\">\n<html><head><meta name=\"qrichtext\" content=\"1\" /><style type=\"text/css\">\n</style></head><body style=\" font-family:\'MS Shell Dlg 2\'; font-size:{self.config.font_size}; font-weight:400; font-style:normal;\">\n<span>{output}</span></body></html>")
                 self.CheckResultRequest.setChecked(True)
                 self.CheckFailRequest.setChecked(False)
+                print(time.perf_counter() - st)
             except Exception as s:
                 print(s)
                 self.CheckFailRequest.setChecked(True)

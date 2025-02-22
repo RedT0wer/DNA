@@ -231,9 +231,11 @@ def one(request,file_orig,file_req,config):
 
     target_str,letter = build_string(arr_str[index_target_str_in_arr_str],index_num_in_target_str,0,'') #целевой Экзон и строка из удаляемых символов(если удаляли)
 
+    # обернуть асинхронно
     database,arr_start,aft_string = build_all_database(file_orig,file_req,config)
     num_for_arr_start = (num - 1) // 3
     name_block,st1,end1 = find_block_v2(database,arr_start,aft_string,num_for_arr_start + 1) 
+    #
 
     bef_string = transform_bef_string(bef_string,avg,'find')
     mutation_string = transform_mutation(st1 * 3, bef_string)

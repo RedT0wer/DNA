@@ -149,7 +149,7 @@ class ProteinDomainReader:
         return self.__domains
 
     def __read_url(self, identifier) -> List[Dict]:
-        url = f"https://rest.uniprot.org/uniprotkb/{identifier}.json"
+        url = f"https://rest.uniprot.org/uniprotkb/{identifier}.json?fields=ft_domain%2Cft_region%2Cft_repeat%2Cft_coiled%2Cft_compbias"
         path_get = f"{os.getcwd()}\GET\PDR_{identifier}.json"
 
         if not os.path.exists(path_get):
@@ -167,14 +167,16 @@ class ProteinDomainReader:
         return response_json["features"]
 
     def __processing_domains(self, domains) -> None:
-        for i in range(1, len(domains)):
-            if domains[i]["type"] == "Region":
-                break
-            
+        arr = []
+        for i in range(len(domains)):
             st = int(domains[i]["location"]["start"]["value"])
             end = int(domains[i]["location"]["end"]["value"])
             description = domains[i]["description"]
+            arr.append((st,end,description))
+        arr.sort(key=lambda x: x[0])
 
+        for i in range(len(arr)):
+            st, end, description = arr[i]
             self.__domains[st] = [end, description]
 
     def read_domains(self, identifier) -> None:
